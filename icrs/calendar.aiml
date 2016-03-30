@@ -5,7 +5,7 @@
           <template>
             <condition>
               <li name="event-start" value="">
-                for what time?
+                you want it done for what time <get name="event-day"/>?
               </li>
               <li name="event-end" value="">
                 you would end by what time?
@@ -23,7 +23,13 @@
                 <condition name="event-attendees" value="NOONE">
                   <set name="event-attendees" />
                 </condition>
-                <system>ruby ./executables/google-apis.rb new --start &quot;<get name="event-start"/>&quot; --end &quot;<get name="event-end"/>&quot; --summary &quot;<get name="event-summary"/>&quot; --attendees &quot;<get name="event-attendees"/>&quot;</system>
+                <system>
+                  ruby ./executables/google-apis.rb new
+                  --start &quot;<get name="event-start"/> <get name="event-day"/>&quot;
+                  --end &quot;<get name="event-end"/> <get name="event-day"/>&quot;
+                  --summary &quot;<get name="event-summary"/>&quot;
+                  --attendees &quot;<get name="event-attendees"/>&quot;
+                  </system>
                 <srai>CLEANEVENT</srai>
               </li>
             </condition>
@@ -44,7 +50,7 @@
       </category>
       <category>
           <pattern>*</pattern>
-          <that>* WHAT TIME</that>
+          <that>* DONE FOR WHAT TIME</that>
           <template>
             <think><set name="event-start"><star/></set></think>
             <sentence>
@@ -53,8 +59,8 @@
           </template>
       </category>
       <category>
-          <pattern>FOR *</pattern>
-          <that>* WHAT TIME</that>
+          <pattern>*</pattern>
+          <that>* DONE FOR WHAT TIME *</that>
           <template>
             <think><set name="event-start"><star/></set></think>
             <sentence>
@@ -226,6 +232,7 @@
         <pattern>HI *</pattern>
         <template>
           <srai>HELLO</srai>
+          <srai><star/></srai>
         </template>
     </category>
     <category>
@@ -234,7 +241,13 @@
             I'm a bot, silly!
         </template>
     </category>
-   <category>
+    <category>
+        <pattern>WHO ARE YOU</pattern>
+        <template>
+            I'm a bot, silly!
+        </template>
+    </category>
+    <category>
       <pattern>MY NAME IS *</pattern>
       <template>
          That is interesting that your name is <set name="name"><star/></set>
@@ -262,7 +275,7 @@
     <category>
       <pattern>WHAT EVENTS DO I HAVE *</pattern>
       <template>
-        <think><set name="day"><star/></set></think>
+        <think><set name="event-day"><star/></set></think>
         <srai>EVENTS <star/></srai>
       </template>
    </category>
@@ -275,7 +288,223 @@
         </sentence>
       </template>
    </category>
+   <category>
+      <pattern>ADD EVENT FOR *</pattern>
+      <template>
+        <think><set name="event-day"><star/></set></think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+   <category>
+      <pattern>ADD EVENT FOR * AT *</pattern>
+      <template>
+        <think>
+          <set name="event-day"><star/></set>
+          <set name="event-start"><star index="2"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+   <category>
+      <pattern>ADD EVENT FOR * AT * WITH *</pattern>
+      <template>
+        <think>
+          <set name="event-day"><star/></set>
+          <set name="event-start"><star index="2"/></set>
+          <set name="event-friend"><star index="3"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
     <category>
+      <pattern>ADD EVENT FOR * AT * TILL *</pattern>
+      <template>
+        <think>
+          <set name="event-day"><star/></set>
+          <set name="event-start"><star index="2"/></set>
+          <set name="event-end"><star index="3"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+   <category>
+      <pattern>ADD EVENT FOR * AT * TO *</pattern>
+      <template>
+        <think>
+          <set name="event-day"><star/></set>
+          <set name="event-start"><star index="2"/></set>
+          <set name="event-end"><star index="3"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+   <category>
+      <pattern>ADD EVENT FOR * WITH *</pattern>
+      <template>
+        <think>
+          <set name="event-day"><star/></set>
+          <set name="event-friend"><star index="2"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+   <category>
+      <pattern>ADD EVENT WITH *</pattern>
+      <template>
+        <think>
+          <set name="event-friend"><star index="1"/></set>
+        </think>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+        <category>
+      <pattern>ADD EVENT FOR *</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+   </category>
+      <category>
+      <pattern>SCHEDULE AN EVENT *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>ADD AN EVENT *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>SCHEDULE A MEETING *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>ADD A MEETING *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BLOCK MY CALENDAR *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BOOK A MEETING *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BOOK MY CALENDAR *</pattern>
+      <template>
+        <srai>ADD EVENT <star/></srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BE SO KIND AS *</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>YOU COULD *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>YOU TO *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+   <category>
+    <category>
+      <pattern>YOU CAN *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+   <category>
+      <pattern>CAN YOU *</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+   <category>
+      <pattern>WOULD YOU*</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>I WANT *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>TO *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>AROUND *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>ABOUT *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>FOR *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+     <category>
+      <pattern>DO *</pattern>
+      <template>
+        <srai><star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>HELP ME *</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>COULD YOU *</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+    <category>
+      <pattern>PLEASE *</pattern>
+      <template>
+        <sentence>
+          Sure, <srai><star/></srai>
+        </sentence>
+      </template>
+   </category>
+    <category>
+      <pattern>PLZ *</pattern>
+      <template>
+        <srai>PLEASE <star/></srai>
+      </template>
+   </category>
+     <category>
         <pattern>*</pattern>
         <template>
           <random>
