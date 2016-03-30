@@ -7,8 +7,8 @@ logging.basicConfig(level=logging.INFO,
 import telegram
 from telegram.ext import Updater
 
-bot = telegram.Bot(token='214684085:AAHUQ8dmaKjqXCAEa238xjgaNA9IqFMHVxA')
-updater = Updater(token='214684085:AAHUQ8dmaKjqXCAEa238xjgaNA9IqFMHVxA')
+bot = telegram.Bot(token='204971482:AAGmYTur90DJBtn-G_MUaMN1ugCUYBI8Mqs')
+updater = Updater(token='204971482:AAGmYTur90DJBtn-G_MUaMN1ugCUYBI8Mqs')
 dispatcher = updater.dispatcher
 
 
