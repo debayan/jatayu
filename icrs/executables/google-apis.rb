@@ -103,8 +103,12 @@ def add_new_event(service, options={})
     attendees: options[:attendees].map {|e| {email: e}},
   })
 
-  result = service.insert_event('primary', event)
-  puts "Event created: #{result.html_link}"
+  begin
+    result = service.insert_event('primary', event)
+    puts "Event created: #{result.html_link}"
+  rescue
+    puts "Something went wrong"
+  end
 
 end
 

@@ -4,106 +4,144 @@
           <pattern>ASKEVENT</pattern>
           <template>
             <condition>
-              <li name="event-start" value=""><srai>ASKTIME</srai></li>
-              <li name="event-end" value=""><srai>ASKENDTIME</srai></li>
-              <li name="event-summary" value=""><srai>ASKSUMMARY</srai></li>
-              <li name="event-attendees" value=""><srai>ASKATTENDEES</srai></li>
-              <li><srai>ADDEVENT</srai></li>
+              <li name="event-start" value="">
+                for what time?
+              </li>
+              <li name="event-end" value="">
+                you would end by what time?
+              </li>
+              <li name="event-summary" value="">
+                what shall we name this event ?
+              </li>
+              <li name="event-attendees" value="">
+                who else should we invite ?
+              </li>
+              <li name="event-add-confirm" value="">
+                shall I go ahead and add event &quot;<get name="event-summary"/>&quot; to your calendar ?
+              </li>
+              <li>
+                <condition name="event-attendees" value="NOONE">
+                  <set name="event-attendees" />
+                </condition>
+                <system>ruby ./executables/google-apis.rb new --start &quot;<get name="event-start"/>&quot; --end &quot;<get name="event-end"/>&quot; --summary &quot;<get name="event-summary"/>&quot; --attendees &quot;<get name="event-attendees"/>&quot;</system>
+                <srai>CLEANEVENT</srai>
+              </li>
             </condition>
           </template>
       </category>
       <category>
-          <pattern>ASKTIME</pattern>
-          <template>Sure, for what time?</template>
+          <pattern>CLEANEVENT</pattern>
+          <template>
+            <think>
+              <set name="topic" />
+              <set name="event-start" />
+              <set name="event-end" />
+              <set name="event-summary" />
+              <set name="event-attendees" />
+              <set name="event-add-confirm" />
+            </think>
+          </template>
       </category>
       <category>
           <pattern>*</pattern>
-          <that>SURE FOR WHAT TIME</that>
+          <that>* WHAT TIME</that>
           <template>
             <think><set name="event-start"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
           <pattern>FOR *</pattern>
-          <that>SURE FOR WHAT TIME</that>
+          <that>* WHAT TIME</that>
           <template>
             <think><set name="event-start"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
-      </category>
-      <category>
-          <pattern>ASKENDTIME</pattern>
-          <template>And you would end by what time?</template>
       </category>
       <category>
           <pattern>AROUND *</pattern>
-          <that>AND YOU WOULD END BY WHAT TIME</that>
+          <that>* END BY WHAT TIME</that>
           <template>
             <think><set name="event-end"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
           <pattern>*</pattern>
-          <that>AND YOU WOULD END BY WHAT TIME</that>
+          <that>* END BY WHAT TIME</that>
           <template>
             <think><set name="event-end"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
-      </category>
-      <category>
-          <pattern>ASKSUMMARY</pattern>
-          <template>And what shall we name this event ?</template>
       </category>
       <category>
           <pattern>CALL IT *</pattern>
-          <that>AND WHAT SHALL WE NAME THIS EVENT</that>
+          <that>* NAME THIS EVENT</that>
           <template>
             <think><set name="event-summary"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
           <pattern>*</pattern>
-          <that>AND WHAT SHALL WE NAME THIS EVENT</that>
+          <that>* NAME THIS EVENT</that>
           <template>
             <think><set name="event-summary"><star/></set></think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
           <pattern>* WITH *</pattern>
-          <that>AND WHAT SHALL WE NAME THIS EVENT</that>
+          <that>* NAME THIS EVENT</that>
           <template>
             <think>
               <set name="event-summary"><star index="1"/> with <star index="2"/></set>
               <set name="event-friend"><star index="2"/></set>
             </think>
-            <srai>ASKEVENT</srai>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
-          <pattern>_ WHATEVER *</pattern>
-          <that>AND WHAT SHALL WE NAME THIS EVENT</that>
+          <pattern>WHATEVER</pattern>
+          <that>* NAME THIS EVENT</that>
           <template>
             <think><set name="event-summary">Unnamed Event</set></think>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
-      </category>
-      <category>
-          <pattern>ASKATTENDEES</pattern>
-          <template>Who else should we invite ?</template>
       </category>
       <category>
           <pattern>*</pattern>
-          <that>WHO ELSE SHOULD WE INVITE</that>
+          <that>* ELSE SHOULD WE INVITE</that>
           <template>
             <srai>ADDATTENDEES <star/></srai>
           </template>
       </category>
       <category>
+          <pattern>NO *</pattern>
+          <that>* ELSE SHOULD WE INVITE</that>
+          <template>
+            <srai>ADDATTENDEES NOONE</srai>
+          </template>
+      </category>
+      <category>
           <pattern>INVITE *</pattern>
-          <that>WHO ELSE SHOULD I INVITE</that>
+          <that>* ELSE SHOULD WE INVITE</that>
           <template>
             <srai>ADDATTENDEES <star/></srai>
           </template>
@@ -112,8 +150,11 @@
           <pattern>ADDATTENDEES *</pattern>
           <template>
             <think>
-              <set name="event-attendee"><get name="event-attendee"/>,<star/></set>
+              <set name="event-attendees"><star/></set>
             </think>
+            <sentence>
+              <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
       <category>
@@ -133,12 +174,38 @@
           <template>No problems. </template>
       </category>
       <category>
-          <pattern>ADDEVENT</pattern>
+          <pattern>YES</pattern>
+          <that>* GO AHEAD AND ADD EVENT *</that>
           <template>
-            <system>ruby ./executables/google-apis.rb add --start <get name="event-start"/> --end <get name="event-end"/> --summary <get name="event-summary"/> --attendees <get name="event-attendees"/></system>
+            <think>
+              <set name="event-add-confirm">true</set>
+            </think>
+            <sentence>
+              Okay, <srai>ASKEVENT</srai>
+            </sentence>
           </template>
       </category>
-    </topic>
+      <category>
+          <pattern>YES</pattern>
+          <that>* CONTINUE ADDING AN EVENT</that>
+          <template>
+            <sentence>
+              So <srai>ASKEVENT</srai>
+            </sentence>
+          </template>
+      </category>
+      <category>
+          <pattern>NO</pattern>
+          <that>* CONTINUE ADDING AN EVENT</that>
+          <template>
+            Fine, then.<srai>CLEANEVENT</srai>
+          </template>
+      </category>
+      <category>
+          <pattern>*</pattern>
+          <template>Do you want to continue adding an event ?</template>
+      </category>
+     </topic>
     <category>
         <pattern>HELLO</pattern>
         <template>
@@ -147,12 +214,6 @@
             <li>Hey, yourself!</li>
             <li>Howdy!</li>
           </random>
-        </template>
-    </category>
-    <category>
-        <pattern>HELLO *</pattern>
-        <template>
-          <srai>HELLO</srai>
         </template>
     </category>
     <category>
@@ -186,6 +247,19 @@
       </template>
    </category>
    <category>
+      <pattern>EVENTS *</pattern>
+      <template>
+        <system>ruby ./executables/google-apis.rb upcoming --from &quot;<star/>&quot;</system>
+      </template>
+   </category>
+   <category>
+      <pattern>WHAT EVENTS DO I HAVE</pattern>
+      <template>
+        <think><set name="day">now</set></think>
+        <srai>EVENTS now</srai>
+      </template>
+   </category>
+    <category>
       <pattern>WHAT EVENTS DO I HAVE *</pattern>
       <template>
         <think><set name="day"><star/></set></think>
@@ -193,10 +267,12 @@
       </template>
    </category>
    <category>
-      <pattern>_ ADD _ EVENT</pattern>
+      <pattern>ADD EVENT</pattern>
       <template>
         <think><set name="topic">ADDEVENT</set></think>
-        <srai>ASKEVENT</srai>
+        <sentence>
+          <srai>ASKEVENT</srai>
+        </sentence>
       </template>
    </category>
     <category>

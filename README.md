@@ -2,12 +2,14 @@
 
 ## Installing Dependencies
 
-$ gem install bundler
-$ bundle install
+`$ gem install bundler`
 
-$ pip install -r requirements.txt
+`$ bundle install`
+
+`$ pip install -r requirements.txt`
 
 ## Running repl 
 
-$ cd icrs
-$ python jatayu.py
+`$ cd icrs`
+
+`$ python jatayu.py`
