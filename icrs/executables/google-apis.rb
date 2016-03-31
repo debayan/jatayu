@@ -7,55 +7,89 @@ require 'fileutils'
 require 'optparse'
 require 'chronic'
 
-OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-APPLICATION_NAME = 'Jatayu'
-CLIENT_SECRETS_PATH = File.join(Dir.pwd, 'executables', 'client_secret.json')
-CREDENTIALS_PATH = File.join(Dir.home, '.credentials',
-                             "calendar-ruby-quickstart.yaml")
-SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
 
 MAX_EVENTS = 3
 
-##
-# Ensure valid credentials, either by restoring from the saved credentials
-# files or intitiating an OAuth2 authorization. If authorization is required,
-# the user's default browser will be launched to approve the request.
-#
-# @return [Google::Auth::UserRefreshCredentials] OAuth2 credentials
-def authorize
-  FileUtils.mkdir_p(File.dirname(CREDENTIALS_PATH))
+class Service
 
-  client_id = Google::Auth::ClientId.from_file(CLIENT_SECRETS_PATH)
-  token_store = Google::Auth::Stores::FileTokenStore.new(file: CREDENTIALS_PATH)
-  authorizer = Google::Auth::UserAuthorizer.new(
-    client_id, SCOPE, token_store)
-  user_id = 'default'
-  credentials = authorizer.get_credentials(user_id)
-  if credentials.nil?
-    url = authorizer.get_authorization_url(
-      base_url: OOB_URI)
-    puts "Open the following URL in the browser and enter the " +
+  $APPLICATION_NAME = 'Jatayu'
+  $OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
+  $SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
+  $CLIENT_SECRETS_PATH = File.join(Dir.pwd, 'executables', 'client_secret.json')
+  $CREDENTIALS_PATH = File.join(Dir.home, '.credentials',
+                               "calendar-ruby-quickstart.yaml")
+
+  # Initialize the API and return a service variable
+  def initialize(user_id)
+    @user_id = user_id
+  end
+
+  def service
+    s = Google::Apis::CalendarV3::CalendarService.new
+    s.client_options.application_name = $APPLICATION_NAME
+    s.authorization = authorize
+    s
+  end
+
+  def fetch_authorizer
+    FileUtils.mkdir_p(File.dirname($CREDENTIALS_PATH))
+
+    client_id = Google::Auth::ClientId.from_file($CLIENT_SECRETS_PATH)
+    token_store = Google::Auth::Stores::FileTokenStore.new(file: $CREDENTIALS_PATH)
+    @authorizer = Google::Auth::UserAuthorizer.new(
+      client_id, $SCOPE, token_store)
+  end
+
+  # Ensure valid credentials, either by restoring from the saved credentials
+  # files or intitiating an OAuth2 authorization. If authorization is required,
+  # the user's default browser will be launched to approve the request.
+  #
+  # @return [Google::Auth::UserRefreshCredentials] OAuth2 credentials
+  def authorize
+    fetch_authorizer
+    @credentials = @authorizer.get_credentials(@user_id)
+    if @credentials.nil?
+      ask_for_authorization
+    end
+    @credentials
+  end
+
+  def authorize!(code)
+    fetch_authorizer
+    @credentials = @authorizer.get_and_store_credentials_from_code(
+        user_id: @user_id, code: code, base_url: $OOB_URI)
+    puts "I have received authorization to manage your calender."
+  end
+
+  def ask_for_authorization
+    url = @authorizer.get_authorization_url(
+      base_url: $OOB_URI)
+    puts "Open the following URL in your browser and sene me the " +
          "resulting code after authorization"
     puts url
-    code = STDIN.gets
-    credentials = authorizer.get_and_store_credentials_from_code(
-      user_id: user_id, code: code, base_url: OOB_URI)
+    exit
   end
-  credentials
-end
 
+end
 
 # Validate time string
 def validate(str)
-  puts !!Chronic.parse(str)
+  puts Chronic.parse(str)
 end
 
 # Fetch the next n events for the user
-def upcoming_events(service, n, offset=nil)
-  offset = Chronic.parse(offset)
-  if offset.nil?
-    offset = Time.now
+def upcoming_events(options)
+  if !options[:user_id]
+    puts "Please provide --user-id"
+    return
   end
+
+  s = Service.new(options[:user_id])
+  service = s.service
+
+  offset = Chronic.parse(options[:from]) || Time.now
+  n = options[:next] || MAX_EVENTS
+
   calendar_id = 'primary'
   response = service.list_events(calendar_id,
                                  max_results: n,
@@ -76,20 +110,28 @@ def upcoming_events(service, n, offset=nil)
 
 end
 
-def add_new_event(service, options={})
+def add_new_event(options={})
+  if !options[:user_id]
+    puts "Please provide --user-id"
+    return
+  end
+
+  s = Service.new(options[:user_id])
+  service = s.service
   options[:attendees] = options[:attendees] || []
-  if !options[:start_time]
-    puts "ASKTIME"
-    return
-  end
-  if !options[:end_time]
-    puts "ASKENDTIME"
-    return
-  end
-  if !options[:summary]
-    puts "ASKSUMMARY"
-    return
-  end
+  #if !options[:start_time]
+  #  puts "ASKTIME"
+  #  return
+  #end
+  #if !options[:end_time]
+  #  puts "ASKENDTIME"
+  #  return
+  #end
+  #if !options[:summary]
+  #  puts "ASKSUMMARY"
+  #  return
+  #end
+  #
   event = Google::Apis::CalendarV3::Event.new( {
     summary: options[:summary] || "Untitled Event",
     location: options[:location] || nil,
@@ -112,13 +154,21 @@ def add_new_event(service, options={})
 
 end
 
-# Initialize the API
-service = Google::Apis::CalendarV3::CalendarService.new
-service.client_options.application_name = APPLICATION_NAME
-service.authorization = authorize
+def authorize_token(options, token)
+  if !options[:user_id]
+    puts "Please provide --user-id"
+    return
+  end
+
+  s = Service.new(options[:user_id])
+  s.authorize!(token)
+end
 
 options = {}
 args = OptionParser.new do |parser|
+  parser.on("--user-id [U]") do |u|
+    options[:user_id] = u
+  end
   parser.on("--next [N]", MAX_EVENTS) do |n|
     options[:next] = n
   end
@@ -145,15 +195,18 @@ args = OptionParser.new do |parser|
   end
 end.parse!
 
+
 if args.empty?
-  upcoming_events(service, MAX_EVENTS)
+  upcoming_events(options)
+elsif args[0] == "authorize-token"
+  authorize_token(options, args[1])
 elsif args[0] == "upcoming"
-  upcoming_events(service, options[:next]||MAX_EVENTS, options[:from])
+  upcoming_events(options)
 elsif args[0] == "new"
-  add_new_event(service, options)
+  add_new_event(options)
 elsif args[0] == "validate-time"
   validate(args[1])
 else
-  upcoming_events(service, MAX_EVENTS)
+  upcoming_events(options)
 end
 
