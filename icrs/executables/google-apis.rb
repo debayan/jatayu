@@ -196,17 +196,19 @@ args = OptionParser.new do |parser|
 end.parse!
 
 
-if args.empty?
-  upcoming_events(options)
-elsif args[0] == "authorize-token"
-  authorize_token(options, args[1])
-elsif args[0] == "upcoming"
-  upcoming_events(options)
-elsif args[0] == "new"
-  add_new_event(options)
-elsif args[0] == "validate-time"
-  validate(args[1])
-else
-  upcoming_events(options)
+begin
+  if args.empty?
+    upcoming_events(options)
+  elsif args[0] == "authorize-token"
+    authorize_token(options, args[1])
+  elsif args[0] == "upcoming"
+    upcoming_events(options)
+  elsif args[0] == "new"
+    add_new_event(options)
+  elsif args[0] == "validate-time"
+    validate(args[1])
+  else
+    upcoming_events(options)
+  end
+rescue
 end
-

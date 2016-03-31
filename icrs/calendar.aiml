@@ -23,14 +23,20 @@
                 <condition name="event-attendees" value="NOONE">
                   <set name="event-attendees" />
                 </condition>
-                <system>
-                  ruby ./executables/google-apis.rb new
-                  --start &quot;<get name="event-start"/> <get name="event-day"/>&quot;
-                  --end &quot;<get name="event-end"/> <get name="event-day"/>&quot;
-                  --summary &quot;<get name="event-summary"/>&quot;
-                  --attendees &quot;<get name="event-attendees"/>&quot;
-                  </system>
-                <srai>CLEANEVENT</srai>
+                <set name="result"><system>
+ruby ./executables/google-apis.rb new
+    --start &quot;<get name="event-start"/> <get name="event-day"/>&quot;
+    --end &quot;<get name="event-end"/> <get name="event-day"/>&quot;
+    --summary &quot;<get name="event-summary"/>&quot;
+    --attendees &quot;<get name="event-attendees"/>&quot;
+    --user-id <get name="user-id" />
+              </system></set>
+                <condition name="result">
+                  <li value="">Sorry, something went wrong, do you want to try again ?</li>
+                  <li>
+                    <srai>CLEANEVENT</srai>
+                  </li>
+                </condition>
               </li>
             </condition>
           </template>
@@ -49,6 +55,13 @@
           </template>
       </category>
       <category>
+          <pattern>YES</pattern>
+          <that>* DO YOU WANT TO TRY AGAIN</that>
+          <template>
+            <srai>ASKEVENT</srai>
+          </template>
+      </category>
+       <category>
           <pattern>*</pattern>
           <that>* DONE FOR WHAT TIME</that>
           <template>
@@ -187,7 +200,7 @@
               <set name="event-add-confirm">true</set>
             </think>
             <sentence>
-              Okay, <srai>ASKEVENT</srai>
+              <srai>ASKEVENT</srai>
             </sentence>
           </template>
       </category>
@@ -211,7 +224,7 @@
           <pattern>*</pattern>
           <template>Do you want to continue adding an event ?</template>
       </category>
-     </topic>
+   </topic>
     <category>
         <pattern>HELLO</pattern>
         <template>
@@ -238,31 +251,49 @@
     <category>
         <pattern>WHAT ARE YOU</pattern>
         <template>
-            I'm a bot, silly!
+          I'm a bot.
         </template>
     </category>
     <category>
         <pattern>WHO ARE YOU</pattern>
         <template>
-            I'm a bot, silly!
+            I'm Jatayu.
         </template>
     </category>
     <category>
       <pattern>MY NAME IS *</pattern>
       <template>
-         That is interesting that your name is <set name="name"><star/></set>
+         It's interesting that your name is <set name="name"><star/></set>
       </template>
    </category>
    <category>
       <pattern>WHAT IS MY NAME</pattern>
       <template>
-         Your name is <get name="name"/>.
+         <condition name="name">
+           <li value="">I don't know your name. What is your name ?</li>
+           <li>Your name is <get name="name"/>.</li>
+         </condition>
       </template>
    </category>
    <category>
+      <pattern>WHO AM I</pattern>
+      <template>
+         Depends. You could be many things. Yet, nothing at all.
+      </template>
+   </category>
+    <category>
+      <pattern>WHAT IS YOUR NAME</pattern>
+      <template>
+         My name is Jatayu.
+      </template>
+   </category>
+    <category>
       <pattern>EVENTS *</pattern>
       <template>
-        <system>ruby ./executables/google-apis.rb upcoming --from &quot;<star/>&quot;</system>
+        <system>
+ruby ./executables/google-apis.rb upcoming --from &quot;<star/>&quot;
+--user-id <get name="user-id" />
+        </system>
       </template>
    </category>
    <category>
@@ -423,7 +454,6 @@
         <srai><star/></srai>
       </template>
    </category>
-   <category>
     <category>
       <pattern>YOU CAN *</pattern>
       <template>
@@ -437,7 +467,7 @@
       </template>
    </category>
    <category>
-      <pattern>WOULD YOU*</pattern>
+      <pattern>WOULD YOU *</pattern>
       <template>
         <srai>PLEASE <star/></srai>
       </template>
@@ -513,4 +543,4 @@
           </random>
         </template>
     </category>
- </aiml>
+</aiml>
