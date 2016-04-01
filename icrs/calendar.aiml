@@ -25,8 +25,8 @@
                 </condition>
                 <set name="result"><system>
 ruby ./executables/google-apis.rb new
-    --start &quot;<get name="event-start"/> <get name="event-day"/>&quot;
-    --end &quot;<get name="event-end"/> <get name="event-day"/>&quot;
+    --start &quot;<get name="event-day"/> <get name="event-start"/>&quot;
+    --end &quot;<get name="event-day"/> <get name="event-end"/>&quot;
     --summary &quot;<get name="event-summary"/>&quot;
     --attendees &quot;<get name="event-attendees"/>&quot;
     --user-id <get name="user-id" />
@@ -148,7 +148,7 @@ ruby ./executables/google-apis.rb new
           <pattern>*</pattern>
           <that>* ELSE SHOULD WE INVITE</that>
           <template>
-            <srai>ADDATTENDEES <star/></srai>
+            <srai>ADDATTENDEES <get name="emails" /></srai>
           </template>
       </category>
       <category>
@@ -159,10 +159,10 @@ ruby ./executables/google-apis.rb new
           </template>
       </category>
       <category>
-          <pattern>INVITE *</pattern>
+          <pattern>* EMAIL *</pattern>
           <that>* ELSE SHOULD WE INVITE</that>
           <template>
-            <srai>ADDATTENDEES <star/></srai>
+            <srai>ADDATTENDEES <get name="emails" /></srai>
           </template>
       </category>
       <category>
@@ -394,6 +394,48 @@ ruby ./executables/google-apis.rb upcoming --from &quot;<star/>&quot;
         <srai>ADD EVENT</srai>
       </template>
    </category>
+      <category>
+      <pattern>SCHEDULE AN EVENT</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>ADD AN EVENT</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>SCHEDULE A MEETING</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>ADD A MEETING</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BLOCK MY CALENDAR</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BOOK A MEETING</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
+    <category>
+      <pattern>BOOK MY CALENDAR</pattern>
+      <template>
+        <srai>ADD EVENT</srai>
+      </template>
+    </category>
       <category>
       <pattern>SCHEDULE AN EVENT *</pattern>
       <template>

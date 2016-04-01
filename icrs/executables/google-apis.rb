@@ -8,7 +8,7 @@ require 'optparse'
 require 'chronic'
 
 
-MAX_EVENTS = 3
+MAX_EVENTS = 5
 
 class Service
 
@@ -74,7 +74,8 @@ end
 
 # Validate time string
 def validate(str)
-  puts Chronic.parse(str)
+  p = Chronic.parse(str)
+  puts p if ! p.nil?
 end
 
 # Fetch the next n events for the user
@@ -211,4 +212,5 @@ begin
     upcoming_events(options)
   end
 rescue
+  #puts options
 end
