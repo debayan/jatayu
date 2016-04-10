@@ -1,0 +1,58 @@
+{
+  "variables": ["userid","intent","name","topup_amount","mobilenumber","dthnumber","operator","number"],
+
+  "states": [
+    {
+      "name":"begin",
+      "expectingvariables": ["intent"],
+      "on_enter_say": "Hi %name%, what do you want to do? Mobile topup? DTH topup?",
+      "on_repeat_say": ["Hi again", "Transfering to human..."]
+    },
+    {
+      "name":"mobile_topup_number",
+      "expectingvariables": ["mobilenumber", "operator"],
+      "on_enter_say": "What is your mobile number?",
+      "on_repeat_say": ["I need a 10 digit mobile number", "Transferring to human..."]
+    },
+    { 
+      "name":"mobile_topup_amount",
+      "expectingvariables": ["topup_amount"],
+      "on_enter_say": "What amount of topup do you want?",
+      "on_repeat_say": ["I need a 1valid topup amount, do you need help with topup amounts?", "Transferring to human..."]
+    },
+    {
+      "name":"dth_topup_number",
+      "expectingvariables": ["dthnumber", "operator"],
+      "on_enter_say": "What is your DTH ID?",
+      "on_repeat_say": ["I need a valid DTH ID", "Transfering to human..."]
+    },
+    {
+      "name":"dth_topup_amount",
+      "expectingvariables": ["topup_amount"],
+      "on_enter_say": "What amount of topup do you want?",
+      "on_repeat_say": ["I need a valid topup amount, do you need help with amounts?", "Transferring to human..."]
+
+    },
+    {
+      "name":"help_amount",
+      "on_enter_call_print": "show_topup_details"
+    },
+    {
+      "name":"confirm",
+      "on_enter_say": "Doing %topup_amount% for %number%, confirm (yes/no).",
+      "on_repeat_say": ["Type either yes or no", "Transferring to human..."]
+    },
+    {
+      "name":"do_topup",
+      "on_enter_call_print": "topup"
+    }
+    
+  ],
+
+  "transitions": { 
+    ["begin","mobile_topup_number","ifintentmobiletopup()"],
+    ["begin","dth_topup_number","ifintentdthtopup()"],
+
+
+  }
+}
