@@ -26,10 +26,10 @@ class DecisionMaker():
         self.try_all_transitions(text, reply)
 
 class PaytmBrain():
-    def __init__(self):
+    def __init__(self, first_name):
         states=['Begin', 'AskIntent', 'AskIntentClarify', 'ExpectNumber', 'ExpectNumberClarify', 'ExpectTopupAmount', 'ExpectTopupAmountClarify', 'Confirm', 'ConfirmClarify', 'DoTopup', 'InvolveHuman']
 
-        self.model = Model()
+        self.model = Model(first_name)
         machine = Machine(self.model, states, initial='Begin', ignore_invalid_triggers=True, auto_transitions=False)
         machine.on_enter_ExpectNumber('ask_number')
         machine.on_enter_ExpectNumberClarify('ask_number_clarify')
@@ -65,7 +65,7 @@ class PaytmBrain():
         machine.add_transition('wrong_input_confirm', 'ConfirmClarify', 'Begin', unless=['yesorno'])
         machine.add_transition('back_to_begin', 'InvolveHuman', 'Begin')
         machine.add_transition('back_to_begin', 'DoTopup', 'Begin')
-        machine.add_transition('cancel','*','AskIntent')
+        machine.add_transition('cancel','*','Begin')
         machine.draw_graph_now()
         machine.graph.draw('my_state_diagram.png', prog='dot')
         self.d = DecisionMaker(self.model, machine)
@@ -77,7 +77,7 @@ class PaytmBrain():
 
 
 if __name__ == '__main__':
-    p = PaytmBrain()
+    p = PaytmBrain('user')
     while True:
         text = raw_input(': ')
         reply = []

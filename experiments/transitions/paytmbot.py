@@ -19,7 +19,7 @@ def respond(bot, update):
   if update.message.chat_id in paytmbrains:
       p = paytmbrains[update.message.chat_id]
   else:
-      paytmbrains[update.message.chat_id] = PaytmBrain()
+      paytmbrains[update.message.chat_id] = PaytmBrain(update.message.chat.first_name)
       p =  paytmbrains[update.message.chat_id]
   reply = []
   p.process(update.message.text, reply)
