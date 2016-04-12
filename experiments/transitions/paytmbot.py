@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import logging
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 import telegram
@@ -24,6 +24,9 @@ def respond(bot, update):
   reply = []
   p.process(update.message.text, reply)
   bot.sendMessage(chat_id=update.message.chat_id, text=reply[0])
+  print update.message.chat_id
+  print update.message.text
+  print reply[0]
 
 def unknown(bot, update):
   bot.sendMessage(chat_id=update.message.chat_id, text="Sorry, I didn't understand that command.")
