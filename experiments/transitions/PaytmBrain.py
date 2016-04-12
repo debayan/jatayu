@@ -43,7 +43,8 @@ class PaytmBrain():
         machine.on_enter_AskIntent('ask_intent')
         machine.on_enter_AskIntentClarify('ask_intent_clarify')
        
-        machine.add_transition('start', 'Begin', 'AskIntent') 
+        machine.add_transition('_begin_to_confirmation_direct', 'Begin', 'Confirm', conditions=['has_intent','has_valid_number','has_topup_amount'])
+        machine.add_transition('start', 'Begin', 'AskIntent')
         machine.add_transition('_ask_intent_to_confirmation_direct', 'AskIntent', 'Confirm', conditions=['has_intent','has_valid_number','has_topup_amount'])
         machine.add_transition('_ask_intent_confirm', 'AskIntent', 'AskIntentClarify', unless=['has_intent'])
         machine.add_transition('_has_intent', 'AskIntent', 'ExpectNumber', conditions=['has_intent'])
