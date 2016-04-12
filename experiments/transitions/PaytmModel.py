@@ -79,6 +79,7 @@ class Model(object):
     def has_topup_amount(self, text=None,reply=[]):
         for word in text.split(' '):
             if word.isdigit():
-                self._amount = int(word)
-                return True
+                if word > 0 and word < 5000:
+                    self._amount = int(word)
+                    return True
         return False
