@@ -20,7 +20,7 @@ A quick example. See the json below
       "on_enter_say": "Here is your drink."
     }
 
-  ]
+  ],
   "transitions": [
     ["begin", "serve_food", ["needsfood", "!needsdrink"]],
     ["begin", "serve_drinks", ["!needsfood", "needsdrinks"]]
