@@ -31,3 +31,5 @@ A quick example. See the json below
 The above json has 3 states, each has a name. On entering each state something is said to the user as mentioned in the "on_enter_say" field.
 The transitions array mentions two possible transitions. The first field in a transition array member is the beginning state, the second field is the final state, and the third field is an array of function names which must conditionally be true (or false, if there is a ! at the beginning) for the transition to happen.
 
+![alt tag](https://raw.githubusercontent.com/debayan/jatayu/tree/master/chat-transitions/stateexample.png)
+
