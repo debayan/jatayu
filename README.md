@@ -1,6 +1,13 @@
-A json parser which builds a python-transitions based chat bot
+Jatayu is a framework for building chatbots. It is built on top of a modified version of the python-transitions state machine package hosted at https://github.com/tyarkoni/transitions.
 
-A quick example. See the json below
+Our philosophy for designing chat bots is this: all conversational modelling for chat bots should begin as a state machine diagrams on a whiteboard. For example:
+
+![Alt text](chat-transitions/stateexample.png?raw=true "State Diagram")
+
+
+Once a state transition diagram has been drawn, the developer needs to write certain function definitions to take care of validations, RPC, data base queries etc. 
+
+The state machine diagram causes an intermediate json output as show below. This project parses this json, takes the function definitions written by a developer, and creates a chatbot.
 
 ```json
 {
@@ -32,7 +39,6 @@ A quick example. See the json below
 The above json has 3 states, each has a name. On entering each state something is said to the user as mentioned in the "on_enter_say" field.  
 The transitions array mentions two possible transitions. The first field in a transition array member is the beginning state, the second field is the final state, and the third field is an array of function names which must conditionally be true (or false, if there is a ! at the beginning) for the transition to happen.
 
-![Alt text](chat-transitions/stateexample.png?raw=true "State Diagram")
 
 
 INSTALL
