@@ -1,3 +1,0 @@
-aiml
-python-telegram-bot
-
