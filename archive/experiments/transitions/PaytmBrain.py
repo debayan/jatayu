@@ -11,13 +11,15 @@ class DecisionMaker():
     def __init__(self, model_, machine):
         self.model_ = model_
         self.transitions = machine.get_transitions()
+        print self.transitions
 
     def try_all_transitions(self, text, reply):
         currentState = self.model_.state
         for arr in self.transitions:
             if arr[1] == currentState:
                 try:
-                    getattr(self.model_, arr[0])(text,reply)
+                    print arr[0], text, reply
+                    print getattr(self.model_, arr[0])(text,reply)
                 except Exception,e:
                     print e
 
