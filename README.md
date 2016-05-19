@@ -4,8 +4,18 @@ Our philosophy for designing chat bots is this: all conversational modelling for
 
 ![Alt text](chat-transitions/stateexample.png?raw=true "State Diagram")
 
+Once a state transition diagram has been drawn, the developer needs to write certain function definitions to take care of validations, RPC, data base queries etc in the file Model.py. Something like this:
 
-Once a state transition diagram has been drawn, the developer needs to write certain function definitions to take care of validations, RPC, data base queries etc. 
+
+```python
+
+def needsfood(self, text=None, reply=[]):
+    if 'food' in text.lower():
+        return True
+    else:
+        return False
+
+```
 
 The state machine diagram causes an intermediate json output as show below. This project parses this json, takes the function definitions written by a developer, and creates a chatbot.
 
@@ -51,6 +61,13 @@ cd transitions/
 sudo python setup.py install  
 cd ../  
 git clone https://github.com/debayan/jatayu.git  
+
+
+USAGE
+-----
+
 cd jatayu/chat-transitions  
-./parse.py doc.json  
+./parse.py recipe1.json    -> This command currently allows you tot chat with your bot on the command line. No internet hookups have been done yet.  
+A working example can be understood by looking at recipe1.json and Model.py.  
+You may also look at parse.py to look at the framework details.
 
