@@ -3,12 +3,12 @@
 
   "states": [
     {
-      "name":"begin",
-      "on_enter_say": "Hi %name%, what do you want to do? Mobile topup? DTH topup?"
+      "name":"begin"
     },
     {
       "name":"ask_intent",
-      "on_enter_say": "What is your intent?"
+      "on_enter_say": "What is your intent?",
+      "on_enter_call": "testfunc"
     },
     {
       "name":"ask_intent_clarify",
@@ -32,7 +32,7 @@
     },
     {
       "name": "confirm",
-      "on_enter_say": "Confirm that you want a topup for %topupamount% on %mobilenumber%..."
+      "on_enter_say": "Confirm that you want a topup for {{topupamount}} on {{mobilenumber}}..."
     },
     {
       "name": "confirm_clarify",
@@ -49,7 +49,7 @@
   ],
 
   "transitions": [
-    ["begin","ask_intent",["ifhasintent"]],
+    ["begin","ask_intent"],
     ["ask_intent", "ask_intent_clarify", ["!ifhasintent"]],
     ["ask_intent_clarify", "involve_human", ["!hasintent"]],
     ["ask_intent", "expect_number", ["ifhasintent"]],

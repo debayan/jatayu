@@ -32,3 +32,6 @@ class Model(object):
         else:
             self.logger.debug("Did not find confirmation in %s"%text)
             return False
+   
+    def testfunc(self, stt, text=None, reply=[]):
+        print "Entered testfunc"

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import json
+import json, re, string
 import sys, os
 from transitions import Machine
 import logging
@@ -10,7 +10,7 @@ from transitions import logger
 from Model import Model
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 
 class Parse():
     def __init__(self, document, logger):
@@ -43,16 +43,16 @@ class Parse():
         for transition in self.document["transitions"]:
             src = transition[0]
             dst = transition[1]
-            conds = transition[2]
-            self.logger.debug("Adding transition from %s to %s on condition %s"%(src,dst,conds))
             conditions_array = []
             unless_array = []
-            for cond in conds:
-                if '!' in cond:
-                    unless_array.append(cond[1:])
-                else:
-                    conditions_array.append(cond)
-            self.logger.debug("Adding conditions %s and unless %s"%(conditions_array, unless_array))
+            if len(transition) > 2:
+                conds = transition[2]
+                for cond in conds:
+                    if '!' in cond:
+                        unless_array.append(cond[1:])
+                    else:
+                        conditions_array.append(cond)
+            self.logger.debug("Adding transition from %s to %s on conditions %s and unless %s"%(src, dst, conditions_array, unless_array))
             self.machine.add_transition('condition_%s_%s'%(src,dst),src,dst,conditions=conditions_array, unless=unless_array)
         self.transitions = self.machine.get_transitions()
 
@@ -61,18 +61,17 @@ class Parse():
             if state.has_key('on_enter_say'):
                 self.model.dc[state['name']] = state['on_enter_say']
                 def f(cls, stt, text=None, reply=[]):
-                    print "state = %s"%stt
-                    reply.append(cls.dc[stt])
+                    #Find {{}} enclosed text and replace with value of variables
+                    variables = re.findall('{{.*?}}', cls.dc[stt])
+                    if len(variables) > 0:
+                        reply_text = self.model.dc[stt]
+                        for variable in variables:
+                            reply_text = string.replace(reply_text, variable, str(getattr(self.model, variable[2:-2])))
+                        reply.append(reply_text)
+                    else:
+                        reply.append(self.model.dc[stt])
                 setattr(Model, str('say_'+state['name']), classmethod(f))
                 self.logger.debug("Adding %s() to Model"%('say_'+state['name']))
-            if state.has_key('on_enter_call'):
-                def f(cls, text=None,reply=[]):
-                    pass
-                setattr(Model, str(state['on_enter_call']), classmethod(f))
-            if state.has_key('on_exit_call'):
-                def f(cls, text=None,reply=[]):
-                    pass
-                setattr(Model, str(state['on_exit_call']), classmethod(f))
       
            
     def bindFunctions(self):
@@ -89,9 +88,9 @@ class Parse():
 
 
     def printModel(self):
-        print '''class Model(object):'''
+        #print '''class Model(object):'''
+        pass
         
-
     def buildMachine(self):
         self.createVariables()
         self.createStates()
@@ -108,8 +107,7 @@ class Parse():
         for arr in self.transitions:
             if arr[1] == currentState:
                 try:
-                    print arr
-                    print getattr(self.model, arr[0])(arr[2],text,reply)
+                    getattr(self.model, arr[0])(arr[2],text,reply)
                 except Exception,e:
                     print e
 
@@ -127,7 +125,7 @@ if __name__ == '__main__' :
     try:
         d = json.loads(s)
     except Exception,e:
-        print "Could not parse json %s"%e
+        logger.error("Could not parse json %s"%e)
         sys.exit(1)
     p = Parse(d, logger)
     p.buildMachine()
