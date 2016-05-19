@@ -67,7 +67,7 @@ USAGE
 -----
 
 cd jatayu/chat-transitions  
-./parse.py recipe1.json    -> This command currently allows you tot chat with your bot on the command line. No internet hookups have been done yet.  
+./parse.py recipe1.json    -> This command currently allows you to chat with your bot on the command line. No internet hookups have been done yet.  
 A working example can be understood by looking at recipe1.json and Model.py.  
 You may also look at parse.py to look at the framework details.
 
