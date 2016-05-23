@@ -63,6 +63,7 @@
     ["confirm", "do_topup", ["ifconfirm"]],
     ["confirm", "confirm_clarify", ["!ifconfirm"]],
     ["confirm_clarify", "involve_human", ["!ifconfirm"]],
-    ["do_topup","ask_intent"]
+    ["do_topup","ask_intent"],
+    ["involve_human", "ask_intent"]
   ]
 }
