@@ -62,6 +62,7 @@
     ["expect_topup_amount_clarify", "confirm", ["ifhasnumber"]],
     ["confirm", "do_topup", ["ifconfirm"]],
     ["confirm", "confirm_clarify", ["!ifconfirm"]],
-    ["confirm_clarify", "involve_human", ["!ifconfirm"]]
+    ["confirm_clarify", "involve_human", ["!ifconfirm"]],
+    ["do_topup","ask_intent"]
   ]
 }
