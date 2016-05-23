@@ -51,7 +51,7 @@
   "transitions": [
     ["begin","ask_intent"],
     ["ask_intent", "ask_intent_clarify", ["!ifhasintent"]],
-    ["ask_intent_clarify", "involve_human", ["!hasintent"]],
+    ["ask_intent_clarify", "involve_human", ["!ifhasintent"]],
     ["ask_intent", "expect_number", ["ifhasintent"]],
     ["expect_number", "expect_number_clarify", ["!ifhasnumber"]],
     ["expect_number_clarify", "involve_human", ["!ifhasnumber"]],
