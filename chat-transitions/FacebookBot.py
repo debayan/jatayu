@@ -58,6 +58,7 @@ class FacebookBot:
                 bot_brain.buildMachine()
         except Exception,e:
             self.logger.error("Facebook bot error: %s"%e)
+            return
         self.logger.debug("Received: %s"%message_text)
         if len(message_text) > 0:
             reply = []
@@ -68,7 +69,7 @@ class FacebookBot:
         url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%self.facebook_access_token
         values = {
           "recipient": {"id": int(sender_id)},
-          "message": {"text": reply},
+          "message": {"text": str(reply)},
         }
         self.logger.debug("Sending: %s"%values)
         data = urllib.urlencode(values)
