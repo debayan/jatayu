@@ -3,8 +3,8 @@
 import os,sys,argparse,logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
-from TelegramBot import TelegramBot
-from FacebookBot import FacebookBot
+from src.TelegramBot import TelegramBot
+from src.FacebookBot import FacebookBot
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
