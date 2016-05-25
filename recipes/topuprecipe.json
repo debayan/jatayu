@@ -1,0 +1,79 @@
+{
+  "variables": ["name","topupamount","mobilenumber"],
+
+  "states": [
+    {
+      "name":"begin"
+    },
+    {
+      "name":"ask_intent",
+      "on_enter_say": "Hi {{name}}, would you like to do a mobile topup?",
+      "on_enter_call": "testfunc"
+    },
+    {
+      "name":"ask_intent_clarify",
+      "on_enter_say":"You may type one of the following: yes, no."
+    },
+    {
+      "name":"regret",
+      "on_enter_say": "We currently only support mobile topups. Please type something to restart the bot."
+    },
+    {
+      "name":"expect_number",
+      "on_enter_say": "What is your mobile number?"
+    },
+    {
+      "name": "expect_number_clarify",
+      "on_enter_say": "Please enter a valid mobile number. It must be 10 digits and a number."
+    },
+    {
+      "name": "expect_topup_amount",
+      "on_enter_say": "Please enter a topup amount."
+    },
+    {
+      "name": "expect_topup_amount_clarify",
+      "on_enter_say": "Please enter an amount between 1 and 999."
+    },
+    {
+      "name": "confirm",
+      "on_enter_say": "Please confirm that you want a topup for {{topupamount}} on {{mobilenumber}}..."
+    },
+    {
+      "name": "confirm_clarify",
+      "on_enter_say": "Please type one of the following: yes, no"
+    },
+    {
+      "name": "involve_human",
+      "on_enter_say": "We could not understand your request. In future versions we will involve a human representative at this step. For now, please type something else."
+    },
+    {
+      "name": "do_topup",
+      "on_enter_say": "Your topup is done."
+    }
+  ],
+
+  "transitions": [
+    ["begin","ask_intent"],
+    ["ask_intent", "ask_intent_clarify", ["!ifyesno"]],
+    ["ask_intent", "expect_number", ["ifyes","!ifno"]],
+    ["ask_intent", "regret", ["ifno","!ifyes"]],
+    ["ask_intent_clarify", "involve_human", ["!ifyesno"]],
+    ["ask_intent_clarify", "regret", ["ifno","!ifyes"]],
+    ["ask_intent_clarify", "expect_number", ["!ifno","ifyes"]],
+    ["expect_number", "expect_number_clarify", ["!ifhasnumber"]],
+    ["expect_number", "expect_topup_amount", ["ifhasnumber"]],
+    ["expect_number_clarify", "involve_human", ["!ifhasnumber"]],
+    ["expect_number_clarify", "expect_topup_amount",["ifhasnumber"]],
+    ["expect_topup_amount", "expect_topup_amount_clarify", ["!ifhasamount"]],
+    ["expect_topup_amount", "confirm", ["ifhasamount"]],
+    ["expect_topup_amount_clarify", "involve_human", ["!ifhasamount"]],
+    ["expect_topup_amount_clarify", "confirm", ["ifhasamount"]],
+    ["confirm", "do_topup", ["ifconfirm", "ifyes"]],
+    ["confirm", "confirm_clarify", ["!ifconfirm", "!ifyesno"]],
+    ["confirm", "regret", ["ifno", "!ifyes"]],
+    ["confirm_clarify", "involve_human", ["!ifconfirm"]],
+    ["do_topup","ask_intent"],
+    ["involve_human", "ask_intent"],
+    ["regret", "ask_intent"]
+  ]
+}
