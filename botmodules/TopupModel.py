@@ -1,11 +1,23 @@
-class Model(object):
+class TopupModel(object):
     dc = {}
     def __init__(self, logger):
         self.logger = logger
-        pass
+        self.name = 'Jack'
     
-    def ifhasintent(self, stt, text=None, reply=[]):
-        if 'mobile' in text:
+    def ifyesno(self, stt, text=None, reply=[]):
+        if text.lower() == 'yes' or text.lower() == 'no':
+            return True
+        else:
+            return False
+
+    def ifyes(self, stt, text=None, reply=[]):
+        if text.lower() == 'yes':
+            return True
+        else:
+            return False
+
+    def ifno(self, stt, text=None, reply=[]):
+        if text.lower() == 'no':
             return True
         else:
             return False

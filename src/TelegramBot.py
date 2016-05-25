@@ -6,12 +6,13 @@ from telegram.ext import Updater
 from Parse import Parse
 
 class TelegramBot:
-    def __init__(self, logger, chatnetwork, keyslocation, recipelocation):
+    def __init__(self, logger, chatnetwork, keyslocation, recipelocation, botmodulename):
         self.brains = {}
         self.logger = logger
         self.chatnetwork = chatnetwork
         self.keyslocation = keyslocation
         self.recipelocation = recipelocation
+        self.botmodulename = botmodulename
 
         self.connect()
         self.loadrecipe()
@@ -58,7 +59,7 @@ class TelegramBot:
         if update.message.chat_id in self.brains:
             bot_brain = self.brains[update.message.chat_id]
         else:
-            self.brains[update.message.chat_id] = Parse(self.recipe_dict, self.logger)
+            self.brains[update.message.chat_id] = Parse(self.recipe_dict, self.logger, self.botmodulename)
             bot_brain =  self.brains[update.message.chat_id]
             bot_brain.buildMachine()
         reply = []

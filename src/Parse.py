@@ -2,29 +2,30 @@
 
 import json, re, string
 import sys, os
+sys.path.append('../')
 from transitions import Machine
 import logging
 from types import MethodType
 import inspect
 from transitions import logger
-from Model import Model
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 class Parse():
-    def __init__(self, document, logger):
+    def __init__(self, document, logger, botmodulename):
         self.document = document
         self.logger = logger
         self.model = None
         self.machine = None
         self.transitions = None
         self.text = {}
+        self.botmodulename = botmodulename
         
     def createVariables(self):
         for variable in self.document["variables"]:
             self.logger.debug("Setting variable %s"%variable)
-            setattr(Model, variable, 0)
+            setattr(self.botclass, variable, 0)
 
     def createStates(self):
         self.states = []
@@ -33,8 +34,13 @@ class Parse():
             self.states.append(state["name"])
 
     def instantiateModel(self):
-        self.model = Model(self.logger)
-        #print inspect.getmembers(self.model)
+        try:
+            mod = __import__('botmodules.%s'%self.botmodulename, fromlist=[self.botmodulename])
+            self.botclass = getattr(mod, self.botmodulename)
+            self.model = self.botclass(self.logger)
+        except Exception,e:
+            self.logger.error("Failed to load model class %s: %s"%(self.botmodulename,e))
+            sys.exit(1)
   
     def instantiateMachine(self):
          self.machine = Machine(self.model, self.states, initial=self.states[0],ignore_invalid_triggers=False, auto_transitions=False)
@@ -70,7 +76,7 @@ class Parse():
                         reply.append(reply_text)
                     else:
                         reply.append(self.model.dc[stt])
-                setattr(Model, str('say_'+state['name']), classmethod(f))
+                setattr(self.botclass, str('say_'+state['name']), classmethod(f))
                 self.logger.debug("Adding %s() to Model"%('say_'+state['name']))
       
            
@@ -92,9 +98,9 @@ class Parse():
         pass
         
     def buildMachine(self):
+        self.instantiateModel()
         self.createVariables()
         self.createStates()
-        self.instantiateModel()
         self.createModelFunctions()
         self.instantiateMachine()
         self.createTransitions()
