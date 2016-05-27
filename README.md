@@ -4,7 +4,7 @@ It is our view that you should start building chatbots by first drawing a state 
 
 ![Alt text](stateexample.png?raw=true "State Diagram")  
 
-In future versions we shall have a web UI tool where drawing the above diagram will automatically generate the following XML:  
+In future versions we shall have a web UI tool where drawing the above diagram will automatically generate the following JSON:  
 
 ```json
 {
