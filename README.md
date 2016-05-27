@@ -43,6 +43,7 @@ def needs_food(self, text=None, reply=[]):
         return False
 
 ```
+You need to save the above code in a file in the **botmodules/** folder. Look at the existing sample code, or read the **Sample Usage** section below to find out more about this.  
 We currently only support python, but have plans of including node.js and golang.
 
 Essentially, this is all you need to do to create a chatbot with jatayu.  We currently support telegram and facebook out of the box.
