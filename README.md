@@ -1,11 +1,34 @@
-Jatayu is a framework for building chatbots. It is built on top of a modified version of the python-transitions state machine package hosted at https://github.com/tyarkoni/transitions.
+Jatayu is a framework for building chatbots. 
 
-Our philosophy for designing chat bots is this: all conversational modelling for chat bots should begin as a state machine diagrams on a whiteboard. For example:
+It is our view that you should start building chatbots by first drawing a state diagram (or a flowchart) on a whiteboard. Something like this:  
 
-![Alt text](chat-transitions/stateexample.png?raw=true "State Diagram")
+![Alt text](stateexample.png?raw=true "State Diagram")  
 
-Once a state transition diagram has been drawn, the developer needs to write certain function definitions to take care of validations, RPC, data base queries etc in the file Model.py. Something like this:
+In future versions we shall have a web UI tool where drawing the above diagram will automatically generate the following XML:  
 
+```json
+{
+	"variables": ["name"],
+	"states": [{
+		"name": "begin",
+		"on_enter_say": "Hi {{name}}, welcome to my shop."
+	}, {
+		"name": "serve_food ",
+		"on_enter_say": "Here is your food."
+	}, {
+		"name": "serve_drinks",
+		"on_enter_say": "Here is your drink."
+	}],
+	"transitions": [
+		["begin", "serve_food", ["needs_food", "!needs_drinks"]],
+		["begin", "serve_drinks", ["needs_drinks", "!needs_food"]]
+	]
+}
+```  
+
+The json file above needs to be saved as a "recipe" in recipes/ folder.
+
+Once the recipe file above has been written, you need to write certain function definitions to take care of validations, RPC, data base queries, string matching etc in a file in botmodule/ directory. Something like this:
 
 ```python
 
@@ -16,40 +39,9 @@ def needsfood(self, text=None, reply=[]):
         return False
 
 ```
+We currently only support python, but have plans of including node.js and golang.
 
-The state machine diagram causes an intermediate json output as show below. This project parses this json, takes the function definitions written by a developer, and creates a chatbot.
-
-```json
-{
-  "variables": ["name"],
-
-  "states": [
-    {
-      "name":"begin",
-      "on_enter_say": "Hi %name%, welcome to my shop."
-    },
-    {
-      "name":"serve_food",
-      "on_enter_say": "Here is your food."
-    },
-    {
-      "name": "serve_drinks",
-      "on_enter_say": "Here is your drink."
-    }
-
-  ],
-  "transitions": [
-    ["begin", "serve_food", ["needsfood", "!needsdrink"]],
-    ["begin", "serve_drinks", ["!needsfood", "needsdrinks"]]
-  ]
-}
-```
-
-
-The above json has 3 states, each has a name. On entering each state something is said to the user as mentioned in the "on_enter_say" field.  
-The transitions array mentions two possible transitions. The first field in a transition array member is the beginning state, the second field is the final state, and the third field is an array of function names which must conditionally be true (or false, if there is a ! at the beginning) for the transition to happen.
-
-
+Essentially, this is all you need to do to create a chatbot with jatayu.  We currently support telegram and facebook out of the box.
 
 INSTALL
 -------
@@ -63,11 +55,27 @@ cd ../
 git clone https://github.com/debayan/jatayu.git  
 
 
-USAGE
------
+SAMPLE USAGE
+------------  
 
-cd jatayu/chat-transitions  
-./parse.py recipe1.json    -> This command currently allows you to chat with your bot on the command line. No internet hookups have been done yet.  
-A working example can be understood by looking at recipe1.json and Model.py.  
-You may also look at parse.py to look at the framework details.
+The repository contains a fairly complicated working example for a bot that does mobile topups for you.  Look at **recipes/topuprecipe.json**. Also look at the model file in **botmodules/TopupModel.py**. To see this sample in action run the following command:  
+
+**./serve.py telegram config/config.ini recipes/topuprecipe.json TopupModel --cli**  
+
+This will allow you to chat with the bot on the command line. When the flag **--cli** is used, the options **telegram** and **config/config.ini** are ignored.
+
+The first option of serve.py can either be **telegram** or **facebook**.  
+The second option is a path to a config file of the following format:  
+
+```python
+[facebook]
+access_token=<token>
+[telegram]
+access_token=<token>
+```
+It contains access tokens to the chat network.  
+The third option is the path to the json recipe file.  
+The fourth option is the name of the bot module python definition file/class. Both the file and the class names must be the same.
+
+
 
