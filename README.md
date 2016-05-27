@@ -9,16 +9,20 @@ In future versions we shall have a web UI tool where drawing the above diagram w
 ```json
 {
 	"variables": ["name"],
-	"states": [{
+	"states": [
+	{
 		"name": "begin",
 		"on_enter_say": "Hi {{name}}, welcome to my shop."
-	}, {
+	}, 
+	{
 		"name": "serve_food ",
 		"on_enter_say": "Here is your food."
-	}, {
+	}, 
+	{
 		"name": "serve_drinks",
 		"on_enter_say": "Here is your drink."
-	}],
+	}
+	],
 	"transitions": [
 		["begin", "serve_food", ["needs_food", "!needs_drinks"]],
 		["begin", "serve_drinks", ["needs_drinks", "!needs_food"]]
@@ -26,13 +30,13 @@ In future versions we shall have a web UI tool where drawing the above diagram w
 }
 ```  
 
-The json file above needs to be saved as a "recipe" in recipes/ folder.
+The json file above needs to be saved as a "recipe" in **recipes/** folder.
 
 Once the recipe file above has been written, you need to write certain function definitions to take care of validations, RPC, data base queries, string matching etc in a file in botmodule/ directory. Something like this:
 
 ```python
 
-def needsfood(self, text=None, reply=[]):
+def needs_food(self, text=None, reply=[]):
     if 'food' in text.lower():
         return True
     else:
@@ -46,13 +50,13 @@ Essentially, this is all you need to do to create a chatbot with jatayu.  We cur
 INSTALL
 -------
 
-sudo apt-get update  
-sudo apt-get install git python-setuptools  
-git clone https://github.com/debayan/transitions.git  
-cd transitions/  
-sudo python setup.py install  
-cd ../  
-git clone https://github.com/debayan/jatayu.git  
+*sudo apt-get update*  
+*sudo apt-get install git python-setuptools*  
+*git clone https://github.com/debayan/transitions.git*  
+*cd transitions/*  
+*sudo python setup.py install*  
+*cd ../*  
+*git clone https://github.com/debayan/jatayu.git*  
 
 
 SAMPLE USAGE
@@ -76,6 +80,11 @@ access_token=<token>
 It contains access tokens to the chat network.  
 The third option is the path to the json recipe file.  
 The fourth option is the name of the bot module python definition file/class. Both the file and the class names must be the same.
+
+COPYRIGHT
+---------
+
+This code is being distributed under GPLv3 license, and the copyright holders are Debayan Banerjee and Shreyank Gupta.
 
 
 
