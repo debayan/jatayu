@@ -22,7 +22,7 @@
 import json, re, string
 import sys, os
 sys.path.append('../')
-from transitions import Machine
+from transitions.extensions import GraphMachine as Machine
 import logging
 from types import MethodType
 import inspect
@@ -79,7 +79,7 @@ class Parse():
                         conditions_array.append(cond)
             self.logger.debug("Adding transition from %s to %s on conditions %s and unless %s"%(src, dst, conditions_array, unless_array))
             self.machine.add_transition('condition_%s_%s'%(src,dst),src,dst,conditions=conditions_array, unless=unless_array)
-        self.transitions = self.machine.get_transitions()
+        self.transitions = self.machine.transitions
 
     def createModelFunctions(self):
         for state in self.document["states"]:
