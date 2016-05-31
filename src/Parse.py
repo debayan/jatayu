@@ -32,7 +32,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 class Parse():
-    def __init__(self, document, logger, botmodulename):
+    def __init__(self, document, logger, botmodulename, draw=False):
         self.document = document
         self.logger = logger
         self.model = None
@@ -40,6 +40,7 @@ class Parse():
         self.transitions = None
         self.text = {}
         self.botmodulename = botmodulename
+        self.draw = draw
         
     def createVariables(self):
         for variable in self.document["variables"]:
@@ -62,7 +63,7 @@ class Parse():
             sys.exit(1)
   
     def instantiateMachine(self):
-         self.machine = Machine(self.model, self.states, initial=self.states[0],ignore_invalid_triggers=False, auto_transitions=False)
+         self.machine = Machine(self.model, self.states, initial=self.states[0],ignore_invalid_triggers=False, auto_transitions=False, show_conditions=True)
 
     def createTransitions(self):
         for transition in self.document["transitions"]:
@@ -115,6 +116,11 @@ class Parse():
     def printModel(self):
         #print '''class Model(object):'''
         pass
+
+    def drawStateMachine(self):
+        if self.draw:
+            self.machine.graph.draw('my_state_diagram.png', prog='dot')
+            
         
     def buildMachine(self):
         self.instantiateModel()
@@ -125,6 +131,7 @@ class Parse():
         self.createTransitions()
         self.bindFunctions()
         self.printModel()
+        self.drawStateMachine()
 
 
     def try_all_transitions(self, text, reply):

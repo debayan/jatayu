@@ -38,13 +38,14 @@ parser.add_argument('keyslocation', type=str, help='Path to file holding keys to
 parser.add_argument('recipelocation', type=str, help='Path to file holding chat recipe')
 parser.add_argument('botmodulename', type=str, help='Name of bot module class/file')
 parser.add_argument('--cli', action='store_true')
+parser.add_argument('--draw', action='store_true')
 args = parser.parse_args()
 
 
 logger.debug("Received arguments on command line: %s, %s, %s, %s, %s "%(args.chatnetwork, args.keyslocation,args.recipelocation, args.botmodulename, args.cli))
 
 if args.cli:
-    b = GenericBot(logger, args.recipelocation, args.botmodulename)
+    b = GenericBot(logger, args.recipelocation, args.botmodulename, args.draw)
     while True:
         text = raw_input(': ')
         reply = []

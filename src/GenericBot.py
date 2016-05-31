@@ -23,12 +23,13 @@ import json
 from Parse import Parse
 
 class GenericBot:
-    def __init__(self, logger, recipelocation, botmodulename):
+    def __init__(self, logger, recipelocation, botmodulename, draw):
         self.logger = logger
+        self.draw = draw
         self.recipelocation = recipelocation
         self.botmodulename = botmodulename
         self.loadrecipe()
-        self.bot_brain = Parse(self.recipe_dict, self.logger, self.botmodulename)
+        self.bot_brain = Parse(self.recipe_dict, self.logger, self.botmodulename, draw)
         try:
             self.bot_brain.buildMachine()
         except Exception,e:

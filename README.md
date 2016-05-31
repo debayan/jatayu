@@ -2,7 +2,7 @@ Jatayu is a framework for building chatbots.
 
 It is our view that you should start building chatbots by first drawing a state diagram (or a flowchart) on a whiteboard. Something like this:  
 
-![Alt text](stateexample.png?raw=true "State Diagram")  
+![Alt text](diagrams/stateexample.png?raw=true "State Diagram")  
 
 In future versions we shall have a web UI tool where drawing the above diagram will automatically generate the following JSON:  
 
