@@ -1,0 +1,51 @@
+{
+  "variables": ["restaurant_name","movie_name"],
+
+  "states": [
+    {
+      "name":"begin"
+    },
+    {
+      "name":"ask_intent",
+      "on_enter_say": "Hi, you can either see a movie, or go to a restaurant. Which one do you prefer?"
+    },
+    {
+      "name":"ask_intent_clarify",
+      "on_enter_say":"You may type one of the following: movie, restaurant"
+    },
+    {
+      "name":"ask_city",
+      "on_enter_say": "Which city do you live in?"
+    },
+    {
+      "name":"ask_city_confirm",
+      "on_enter_say": "You need to enter a valid city name."
+    },
+    {
+      "name":"show_movie_name",
+      "on_enter_say": "We recommend {{movie_name}} today. (Type something to restart the bot)"
+    },
+    {
+      "name": "show_restaurant_name",
+      "on_enter_say": "We recommend {{restaurant_name}} today. (Type something to restart the bot)"
+    },
+    {
+      "name": "involve_human",
+      "on_enter_say": "We could not understand your request. In future versions we will involve a human representative at this step. For now, please type something else."
+    }
+  ],
+
+  "transitions": [
+    ["begin","ask_intent"],
+    ["ask_intent", "ask_intent_clarify", ["!ifintentclear"]],
+    ["ask_intent", "show_movie_name", ["ifintentclear","ifintentmovie"]],
+    ["ask_intent", "ask_city", ["ifintentclear","ifintentrestaurant"]],
+    ["ask_city", "show_restaurant_name", ["ifvalidcity"]],
+    ["ask_city", "ask_city_confirm", ["!ifvalidcity"]],
+    ["ask_city_confirm", "involve_human", ["!ifvalidcity"]],
+    ["ask_intent_clarify", "involve_human", ["!ifintentclear"]],
+    ["show_restaurant_name","ask_intent"],
+    ["show_movie_name","ask_intent"],
+    ["involve_human", "ask_intent"]
+  ]
+}
