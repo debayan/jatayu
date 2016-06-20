@@ -33,29 +33,29 @@ app = Flask(__name__)
 
 
 parser = argparse.ArgumentParser(description='Start your jatayu bot')
-parser.add_argument('chatnetwork',  type=str, help='Options include facebook, telegram')
-parser.add_argument('keyslocation', type=str, help='Path to file holding keys to authenticate with the chat network')
-parser.add_argument('recipelocation', type=str, help='Path to file holding chat recipe')
-parser.add_argument('botmodulename', type=str, help='Name of bot module class/file')
+parser.add_argument('-n', '--network',  type=str, help='Options include facebook, telegram')
+parser.add_argument('-k', '--keys', type=str, help='Path to file holding keys to authenticate with the chat network')
+parser.add_argument('-r', '--recipe', type=str, help='Path to file holding chat recipe')
+parser.add_argument('-b', '--botmodule', type=str, help='Name of bot module class/file')
 parser.add_argument('--cli', action='store_true')
 parser.add_argument('--draw', action='store_true')
 args = parser.parse_args()
 
 
-logger.debug("Received arguments on command line: %s, %s, %s, %s, %s "%(args.chatnetwork, args.keyslocation,args.recipelocation, args.botmodulename, args.cli))
+logger.debug("Received arguments on command line: %s, %s, %s, %s, %s "%(args.network, args.keys,args.recipe, args.botmodule, args.cli))
 
 if args.cli:
-    b = GenericBot(logger, args.recipelocation, args.botmodulename, args.draw)
+    b = GenericBot(logger, args.recipe, args.botmodule, args.draw)
     while True:
         text = raw_input(': ')
         reply = []
         print '>'+b.respond(text, reply)
     sys.exit(1)
-elif args.chatnetwork == 'telegram' and not args.cli:
-    b = TelegramBot(logger, args.chatnetwork, args.keyslocation, args.recipelocation, args.botmodulename)
+elif args.network == 'telegram':
+    b = TelegramBot(logger, args.network, args.keys, args.recipe, args.botmodule)
     b.poll()
-elif args.chatnetwork == 'facebook' and not args.cli:
-    b = FacebookBot(logger, args.chatnetwork, args.keyslocation, args.recipelocation, args.botmodulename)
+elif args.network == 'facebook':
+    b = FacebookBot(logger, args.network, args.keys, args.recipe, args.botmodule)
     @app.route('/', methods=['POST'])
     def handle():
         try:
@@ -66,4 +66,4 @@ elif args.chatnetwork == 'facebook' and not args.cli:
             return 'error',500
     app.run(port=8000)
 else:
-    logger.error('Chatnetwork name not correct, found %s'%args.chatnetwork)
+    logger.error('Chatnetwork name not correct, found %s'%args.network)
