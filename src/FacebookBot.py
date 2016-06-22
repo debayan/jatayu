@@ -21,15 +21,14 @@
 
 import json, urllib, urllib2, ConfigParser
 from Parse import Parse
+from GenericBot import GenericBot
 
-class FacebookBot:
-    def __init__(self, logger, chatnetwork, keyslocation, recipelocation, botmodulename):
+class FacebookBot(GenericBot):
+    def __init__(self, logger, chatnetwork, keyslocation, recipelocation, botmodulename, draw):
+        GenericBot.__init__(self, logger, recipelocation, botmodulename, draw)
         self.brains = {}
-        self.logger = logger
         self.chatnetwork = chatnetwork
         self.keyslocation = keyslocation
-        self.recipelocation = recipelocation
-        self.botmodulename = botmodulename
         self.loadtoken()
         self.loadrecipe()
 
@@ -98,8 +97,3 @@ class FacebookBot:
             response = urllib2.urlopen(req)
         except Exception,e:
             self.logger.error("Facebook send error: %s"%e)
-        
-    
-
-
-

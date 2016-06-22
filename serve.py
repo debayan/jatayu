@@ -20,7 +20,7 @@
 #!/usr/bin/python
 
 import os,sys,argparse,logging
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 from src.TelegramBot import TelegramBot
 from src.FacebookBot import FacebookBot
@@ -52,10 +52,10 @@ if args.cli:
         print '>'+b.respond(text, reply)
     sys.exit(1)
 elif args.network == 'telegram':
-    b = TelegramBot(logger, args.network, args.keys, args.recipe, args.botmodule)
+    b = TelegramBot(logger, args.network, args.keys, args.recipe, args.botmodule, args.draw)
     b.poll()
 elif args.network == 'facebook':
-    b = FacebookBot(logger, args.network, args.keys, args.recipe, args.botmodule)
+    b = FacebookBot(logger, args.network, args.keys, args.recipe, args.botmodule, args.draw)
     @app.route('/', methods=['POST'])
     def handle():
         try:

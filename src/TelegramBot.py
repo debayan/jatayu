@@ -23,15 +23,14 @@ import os,sys,ConfigParser,json
 import telegram
 from telegram.ext import Updater
 from Parse import Parse
+from GenericBot import GenericBot
 
-class TelegramBot:
-    def __init__(self, logger, chatnetwork, keyslocation, recipelocation, botmodulename):
+class TelegramBot(GenericBot):
+    def __init__(self, logger, chatnetwork, keyslocation, recipelocation, botmodulename, draw):
+        GenericBot.__init__(self, logger, recipelocation, botmodulename, draw)
         self.brains = {}
-        self.logger = logger
         self.chatnetwork = chatnetwork
         self.keyslocation = keyslocation
-        self.recipelocation = recipelocation
-        self.botmodulename = botmodulename
 
         self.connect()
         self.loadrecipe()
