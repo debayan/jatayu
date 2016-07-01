@@ -65,11 +65,15 @@ SAMPLE USAGE
 
 The repository contains a fairly complicated working example for a bot that does mobile topups for you.  Look at **recipes/topuprecipe.json**. Also look at the model file in **botmodules/TopupModel.py**. To see this sample in action run the following command:  
 
-**python serve.py telegram config/config.ini recipes/topuprecipe.json TopupModel --cli**  
+**python serve.py -r recipes/topuprecipe.json -b TopupModel --cli**  
 
-This will allow you to chat with the bot on the command line. When the flag **--cli** is used, the options **telegram** and **config/config.ini** are ignored.
+This will allow you to chat with the bot on the command line. When the flag **--cli** is used, the options **-n** for network and **-k** for network keys are ignored.
 
-The first option of serve.py can either be **telegram** or **facebook**.  
+If you have setup a telegram or a facebook bot, the full command line would be:  
+
+**python serve.py -n telegram -k config/config.ini -r recipes/topuprecipe.json -b TopupModel**  
+
+In this case, the first option of serve.py can either be **telegram** or **facebook**.  
 The second option is a path to a config file of the following format:  
 
 ```python
